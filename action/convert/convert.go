@@ -16,7 +16,9 @@ import (
 const (
 	// Trottle concurrent requests to AWS API.
 	// AWS S3 API has a limit of 3500 COPY requests per prefix per second, so just playing safe here.
-	apiCap = 3000)
+	apiCap = 3000
+)
+
 func Run(config *config.Config) error {
 	if err := config.Validate(); err != nil {
 		log.Fatal(err)
@@ -27,16 +29,7 @@ func Run(config *config.Config) error {
 		return err
 	}
 
-	fmt.Println("Retrieving bucket objects...")
-	objects, err := c.GetBucketObjects()
-	if err != nil {
-		return err
-	}
-	objCount := len(objects)
-
-	fmt.Printf("%v objects found in %s bucket", objCount, config.Bucket)
-
-	convertables, err := c.CreateInputList(objects, config.StorageClass)
+	convertables, err := c.GetConvertableObjects(config.StorageClass)
 	if err != nil {
 		return err
 	}
@@ -69,7 +62,7 @@ func Run(config *config.Config) error {
 	var wg sync.WaitGroup
 	var warns error
 
-	bar := pb.StartNew(objCount)
+	bar := pb.StartNew(eligiblesCount)
 	for _, obj := range eligibles {
 		throttle <- 1
 		wg.Add(1)

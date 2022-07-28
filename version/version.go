@@ -12,7 +12,7 @@ var (
 
 // PrintInfo is used to get generic info about the build
 func PrintInfo() {
-	var result = fmt.Sprintf("s3bc:\nVersion: %s", Version)
+	var result = fmt.Sprintf("s3bc: Bulk convert for S3 objects.\nVersion: %s", Version)
 	if Commit != "" {
 		result = fmt.Sprintf("\n%s\nCommit: %s", result, Commit)
 	}

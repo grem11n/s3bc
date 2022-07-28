@@ -66,7 +66,7 @@ func TestCreateInputList(t *testing.T) {
 	client, err := New("testB")
 	assert.NoError(t, err)
 
-	got, err := client.CreateInputList(objects, "reduced_redundancy")
+	got, err := client.createInputList(objects, "reduced_redundancy")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, *got[0])
 }

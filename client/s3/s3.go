@@ -87,9 +87,28 @@ func IsValidStorageClass(storageClass string) error {
 	return nil
 }
 
+// GetConvertableObjects return a list of objects to convert to the new Storage Class.
+func (c *Client) GetConvertableObjects(storageClass string) ([]*s3.CopyObjectInput, error) {
+	fmt.Println("Retrieving bucket objects...")
+	objects, err := c.GetBucketObjects()
+	if err != nil {
+		return nil, err
+	}
+	objCount := len(objects)
+
+	fmt.Printf("%v objects found in %s bucket", objCount, c.Bucket)
+
+	convertables, err := c.createInputList(objects, storageClass)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertables, nil
+}
+
 // createInputList returns []s3.CopyObjectInput list that contains objects to be sent to AWS API.
 // If object's storage class already satisfies the condition it's not added to the list.
-func (c *Client) CreateInputList(objects []*types.Object, storageClass string) ([]*s3.CopyObjectInput, error) {
+func (c *Client) createInputList(objects []*types.Object, storageClass string) ([]*s3.CopyObjectInput, error) {
 	inputs := []*s3.CopyObjectInput{}
 	var wg sync.WaitGroup
 	var errs error
