@@ -16,9 +16,7 @@ import (
 const (
 	// Trottle concurrent requests to AWS API.
 	// AWS S3 API has a limit of 3500 COPY requests per prefix per second, so just playing safe here.
-	apiCap = 3000
-)
-
+	apiCap = 3000)
 func Run(config *config.Config) error {
 	if err := config.Validate(); err != nil {
 		log.Fatal(err)

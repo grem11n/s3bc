@@ -19,32 +19,7 @@ var convertCmd = &cobra.Command{
 s3bc ...
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		bucket, err := cmd.Flags().GetString("bucket")
-		if err != nil {
-			return err
-		}
-
-		storageClass, err := cmd.Flags().GetString("storage-class")
-		if err != nil {
-			return err
-		}
-
-		exclude, err := cmd.Flags().GetStringSlice("exclude")
-		if err != nil {
-			return err
-		}
-
-		dryRun, err := cmd.Flags().GetBool("dry-run")
-		if err != nil {
-			return err
-		}
-
-		config := &config.Config{
-			Bucket:       bucket,
-			StorageClass: storageClass,
-			Excluded:     exclude,
-			DryRun:       dryRun,
-		}
+		config := config.GetConfig(cmd.Flags())
 
 		if err := convert.Run(config); err != nil {
 			return err
