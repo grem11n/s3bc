@@ -1,27 +1,29 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Yurii Rochniak yrochnyak@gmail.com
 
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/grem11n/s3bc/action/validate"
+	"github.com/grem11n/s3bc/config"
 	"github.com/spf13/cobra"
 )
 
 // validateCmd represents the validate command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Check if files in a bucket have desired storage class.",
+	Long: `Example usage:
+s3bc validate -b example-bucket -s REDUCED_REDUNDANCY`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		config := config.GetConfig(cmd.Flags())
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("validate called")
+		if err := validate.Run(config); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

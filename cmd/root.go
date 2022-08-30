@@ -63,4 +63,11 @@ func init() {
 		"STANDARD",
 		"Storage class to set",
 	)
+
+	rootCmd.PersistentFlags().BoolP(
+		"verbose",
+		"v",
+		false,
+		"Verbose output",
+	)
 }

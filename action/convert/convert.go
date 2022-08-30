@@ -29,7 +29,7 @@ func Run(config *config.Config) error {
 		return err
 	}
 
-	convertibles, err := c.GetConvertableObjects(config.StorageClass)
+	convertibles, err := c.CreateInput(config.StorageClass)
 	if err != nil {
 		return err
 	}
