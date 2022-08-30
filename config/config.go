@@ -14,6 +14,7 @@ type Config struct {
 	StorageClass string
 	Excluded     []string
 	DryRun       bool
+	Verbose      bool
 }
 
 var configInstance *Config
@@ -29,12 +30,14 @@ func GetConfig(flags *flag.FlagSet) *Config {
 			storageClass, _ := flags.GetString("storage-class")
 			exclude, _ := flags.GetStringSlice("exclude")
 			dryRun, _ := flags.GetBool("dry-run")
+			verbose, _ := flags.GetBool("verbose")
 
 			configInstance = &Config{
 				Bucket:       bucket,
 				StorageClass: storageClass,
 				Excluded:     exclude,
 				DryRun:       dryRun,
+				Verbose:      verbose,
 			}
 		}
 	}
