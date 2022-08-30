@@ -22,19 +22,19 @@ var testObject1 = types.Object{
 	StorageClass: types.ObjectStorageClassReducedRedundancy,
 }
 
-func TestmatchedStorageClass_true(t *testing.T) {
+func TestMatchedStorageClass_true(t *testing.T) {
 	ok, err := matchedStorageClass(&testObject0, "Standard")
 	assert.NoError(t, err)
 	assert.True(t, ok)
 }
 
-func TestmatchedStorageClass_false(t *testing.T) {
+func TestMatchedStorageClass_false(t *testing.T) {
 	ok, err := matchedStorageClass(&testObject0, "reduced_redundancy")
 	assert.NoError(t, err)
 	assert.False(t, ok)
 }
 
-func TestmatchedStorageClass_error(t *testing.T) {
+func TestMatchedStorageClass_error(t *testing.T) {
 	_, err := matchedStorageClass(&testObject0, "no_class")
 	assert.Error(t, err)
 }
@@ -55,7 +55,7 @@ func TestSetObjectStorageClass(t *testing.T) {
 }
 
 func TestCreateInputList(t *testing.T) {
-	objects := []*types.Object{&testObject0, &testObject1}
+	objects := []types.Object{testObject0, testObject1}
 	expected := s3.CopyObjectInput{
 		Bucket:       aws.String("testB"),
 		CopySource:   aws.String("testB/foo/bar"),

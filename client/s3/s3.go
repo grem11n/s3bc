@@ -3,6 +3,7 @@ package s3
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 
@@ -28,7 +29,28 @@ func New(bucket string) (*Client, error) {
 		return nil, err
 	}
 
-	s3Client := s3.NewFromConfig(cfg)
+	// TODO: Add AWS Endpoint as a flag.
+	// For now this value is only used for integration tests with Minio.
+	awsURL := os.Getenv("AWS_URL")
+	if awsURL != "" {
+		customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				PartitionID:   "aws",
+				URL:           awsURL,
+				SigningRegion: cfg.Region,
+			}, nil
+		})
+		cfg, err = config.LoadDefaultConfig(
+			context.TODO(),
+			config.WithEndpointResolverWithOptions(customResolver))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.UsePathStyle = true
+	})
 
 	return &Client{
 		S3Client: s3Client,
@@ -37,8 +59,8 @@ func New(bucket string) (*Client, error) {
 }
 
 // GetBucketObjects gets the list of the objects in a bucket and their storage class.
-func (c *Client) GetBucketObjects() ([]*types.Object, error) {
-	var s3objects []*types.Object
+func (c *Client) GetBucketObjects() ([]types.Object, error) {
+	var s3objects []types.Object
 	var errs error
 
 	paginator := s3.NewListObjectsV2Paginator(c.S3Client, &s3.ListObjectsV2Input{
@@ -51,9 +73,7 @@ func (c *Client) GetBucketObjects() ([]*types.Object, error) {
 			errs = multierror.Append(errs, err)
 		}
 
-		for _, obj := range page.Contents {
-			s3objects = append(s3objects, &obj)
-		}
+		s3objects = append(s3objects, page.Contents...)
 	}
 
 	return s3objects, errs
@@ -88,7 +108,7 @@ func IsValidStorageClass(storageClass string) error {
 }
 
 // GetConvertableObjects return a list of objects to convert to the new Storage Class.
-func (c *Client) GetConvertableObjects(storageClass string) ([]*s3.CopyObjectInput, error) {
+func (c *Client) GetConvertableObjects(storageClass string) ([]types.Object, error) {
 	fmt.Println("Retrieving bucket objects...")
 	objects, err := c.GetBucketObjects()
 	if err != nil {
@@ -96,25 +116,35 @@ func (c *Client) GetConvertableObjects(storageClass string) ([]*s3.CopyObjectInp
 	}
 	objCount := len(objects)
 
-	fmt.Printf("%v objects found in %s bucket", objCount, c.Bucket)
+	fmt.Printf("%v objects found in %s bucket\n", objCount, c.Bucket)
 
-	convertables, err := c.createInputList(objects, storageClass)
+	return objects, nil
+}
+
+// CreateInput creates a list of S3 Objects suitable for a mutating API call.
+func (c *Client) CreateInput(storageClass string) ([]*s3.CopyObjectInput, error) {
+	objects, err := c.GetConvertableObjects(storageClass)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertables, nil
+	convertibles, err := c.createInputList(objects, storageClass)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertibles, nil
 }
 
 // createInputList returns []s3.CopyObjectInput list that contains objects to be sent to AWS API.
 // If object's storage class already satisfies the condition it's not added to the list.
-func (c *Client) createInputList(objects []*types.Object, storageClass string) ([]*s3.CopyObjectInput, error) {
+func (c *Client) createInputList(objects []types.Object, storageClass string) ([]*s3.CopyObjectInput, error) {
 	inputs := []*s3.CopyObjectInput{}
 	var wg sync.WaitGroup
 	var errs error
 
 	for _, obj := range objects {
-		gObj := *obj
+		gObj := obj
 		wg.Add(1)
 
 		go func() {
