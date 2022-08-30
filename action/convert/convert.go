@@ -29,14 +29,14 @@ func Run(config *config.Config) error {
 		return err
 	}
 
-	convertables, err := c.GetConvertableObjects(config.StorageClass)
+	convertibles, err := c.GetConvertableObjects(config.StorageClass)
 	if err != nil {
 		return err
 	}
 
 	// Filter out excluded patterns
 	eligibles := []*s3.CopyObjectInput{}
-	for _, convertable := range convertables {
+	for _, convertable := range convertibles {
 		if !isExcluded(config.Excluded, aws.ToString(convertable.Key)) {
 			eligibles = append(eligibles, convertable)
 		}
@@ -89,7 +89,7 @@ func Run(config *config.Config) error {
 	bar.Finish()
 
 	if warns != nil {
-		fmt.Printf("Some non-critical errors occured during the execution:\n%s", warns)
+		fmt.Printf("Some non-critical errors occurred during the execution:\n%s", warns)
 	}
 
 	return nil

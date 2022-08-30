@@ -14,10 +14,9 @@ import (
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
 	Use:   "convert",
-	Short: "Bulk convert objects in an S3 bucket to the given Storage Class",
+	Short: "Bulk convert objects in an S3 bucket to the given storage class",
 	Long: `Example usage:
-s3bc ...
-`,
+s3bc convert -b example-bucket -s REDUCED_REDUNDANCY`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		config := config.GetConfig(cmd.Flags())
 
