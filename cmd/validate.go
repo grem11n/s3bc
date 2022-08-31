@@ -5,6 +5,8 @@ Copyright © 2022 Yurii Rochniak yrochnyak@gmail.com
 package cmd
 
 import (
+	"log"
+
 	"github.com/grem11n/s3bc/action/validate"
 	"github.com/grem11n/s3bc/config"
 	"github.com/spf13/cobra"
@@ -20,7 +22,7 @@ s3bc validate -b example-bucket -s REDUCED_REDUNDANCY`,
 		config := config.GetConfig(cmd.Flags())
 
 		if err := validate.Run(config); err != nil {
-			return err
+			log.Fatalf("Error running validate command: %s", err)
 		}
 
 		return nil

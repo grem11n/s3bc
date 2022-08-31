@@ -45,4 +45,4 @@ docker-test: ## Run tests in a Docker container. Requires a built image
 	docker run --rm --entrypoint="/usr/bin/make" -e GO111MODULE=on -v $(PWD):/app -w /app $(NAME):$(COMMIT) test
 
 docker-build-dev: ## Builds a Dev Docker image for BCM CLI
-	@docker build --no-cache -t $(NAME):$(COMMIT) -f $(DOCKERFILE_DIR)/$(DOCKERFILE_DEV) --progress=plain .
+	@docker build --no-cache -t $(NAME):$(COMMIT) -t $(NAME):dev -f $(DOCKERFILE_DIR)/$(DOCKERFILE_DEV) --progress=plain .
