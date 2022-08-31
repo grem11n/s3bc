@@ -6,6 +6,8 @@ Copyright © 2022 Yurii Rochniak yrochnyak@gmail.com
 package cmd
 
 import (
+	"log"
+
 	"github.com/grem11n/s3bc/action/convert"
 	"github.com/grem11n/s3bc/config"
 	"github.com/spf13/cobra"
@@ -21,7 +23,7 @@ s3bc convert -b example-bucket -s REDUCED_REDUNDANCY`,
 		config := config.GetConfig(cmd.Flags())
 
 		if err := convert.Run(config); err != nil {
-			return err
+			log.Fatalf("Error running convert command: %s", err)
 		}
 
 		return nil

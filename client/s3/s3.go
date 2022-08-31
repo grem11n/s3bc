@@ -61,7 +61,6 @@ func New(bucket string) (*Client, error) {
 // GetBucketObjects gets the list of the objects in a bucket and their storage class.
 func (c *Client) GetBucketObjects() ([]types.Object, error) {
 	var s3objects []types.Object
-	var errs error
 
 	paginator := s3.NewListObjectsV2Paginator(c.S3Client, &s3.ListObjectsV2Input{
 		Bucket: aws.String(c.Bucket),
@@ -70,13 +69,13 @@ func (c *Client) GetBucketObjects() ([]types.Object, error) {
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(context.TODO())
 		if err != nil {
-			errs = multierror.Append(errs, err)
+			return nil, err
 		}
 
 		s3objects = append(s3objects, page.Contents...)
 	}
 
-	return s3objects, errs
+	return s3objects, nil
 }
 
 // UpdateObjectStorageClass updates Storage Class for an object in S3 bucket.
