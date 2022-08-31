@@ -1,0 +1,14 @@
+FROM golang:1.19-alpine
+
+ENV GOFLAGS=-mod=vendor
+ENV CGO_ENABLED=0
+
+RUN apk add --no-cache git make
+RUN wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.49.0
+
+WORKDIR /app
+COPY . /app
+
+RUN make build
+
+ENTRYPOINT ["/app/s3bc"]
