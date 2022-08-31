@@ -1,4 +1,4 @@
-.PHONY: help fmt init mod lint test build check-deps \
+.PHONY: help fmt mod lint test build \
 	docker-build-dev docker-lint docker-test
 
 COMMIT ?= $(shell git rev-parse --short=6 HEAD)
@@ -27,15 +27,10 @@ mod: ## Run mod tidy and mod vendor
 fmt: ## Autoformat
 	@gofmt -w $$(find . -name '*.go' | grep -v vendor)
 
-check-deps: ## Check that dev dependencies are installed
-	@echo "docker: $$(which docker || echo 'not found')"
-	@echo "go: $$(which go || echo 'not found')"
-	@echo "GolangCI-Lint: $$(which golangci-lint || echo 'not found')"
-
-lint: check-deps ## Run linter
+lint: ## Run linter
 	@golangci-lint run -v --timeout=5m --modules-download-mode=vendor -E gosec -E revive -E goconst -E misspell -E whitespace ./...
 
-test: check-deps # Run tests
+test: ## Run tests
 	@go test -v ./...
 
 build: ## Build the binary (intended to use with Docker)
@@ -44,10 +39,10 @@ build: ## Build the binary (intended to use with Docker)
 
 
 docker-lint: ## Run linter in a Docker container. Requires a built image
-	docker run --rm --entrypoint="/usr/bin/make" -e GO111MODULE=on -v $(PWD):/app -w /app $(REGISTRY)/$(NAME):$(COMMIT) lint
+	docker run --rm --entrypoint="/usr/bin/make" -e GO111MODULE=on -v $(PWD):/app -w /app $(NAME):$(COMMIT) lint
 
 docker-test: ## Run tests in a Docker container. Requires a built image
-	docker run --rm --entrypoint="/usr/bin/make" -e GO111MODULE=on -v $(PWD):/app -w /app $(REGISTRY)/$(NAME):$(COMMIT) test
+	docker run --rm --entrypoint="/usr/bin/make" -e GO111MODULE=on -v $(PWD):/app -w /app $(NAME):$(COMMIT) test
 
 docker-build-dev: ## Builds a Dev Docker image for BCM CLI
-	@docker build --no-cache -t $(REGISTRY)/$(NAME):$(COMMIT) -f $(DOCKERFILE_DIR)/$(DOCKERFILE_DEV) --progress=plain .
+	@docker build --no-cache -t $(NAME):$(COMMIT) -f $(DOCKERFILE_DIR)/$(DOCKERFILE_DEV) --progress=plain .

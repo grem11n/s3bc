@@ -1,0 +1,40 @@
+name: S3bc Build
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+    tags:
+      - '*'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the source code from GitHub
+        uses: actions/checkout@v3
+
+      - name: Build Dev Image
+        run: make docker-build-dev
+
+      - name: Lint
+        run: make docker-lint
+
+      - name: Test
+        run: make docker-test
+
+      - name: E2E Tests
+        run: echo "To be implemented"
