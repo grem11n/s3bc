@@ -24,6 +24,38 @@ Today you can use [AWS S3 lifecycle rules](https://docs.aws.amazon.com/AmazonS3/
 Please, keep in mind that this is just a fun side-project. Some functionality is still WIP and might not be thoroughly tested. If you have found a bug or just want to suggest a general improvement, feel free to [create a new issue](https://github.com/grem11n/s3bc/issues/new/choose) or [open a pull request](https://github.com/grem11n/s3bc/compare).
 
 
+## Installation
+
+You can compile an S3BC binary yourself or use it in a Docker container. Releases are still work in progress.
+
+**To build the binary locally**:
+
+1. Ensure that you have Go installed. Since this project uses vendored Go modules, there's no need to download them separately.
+2. Clone this repository:
+    ```
+    git clone https://github.com/grem11n/s3bc.git
+    ```
+2. Run:
+    ```
+    make build
+    ```
+
+This will compile the binary and put it in the `bin/` directory.
+
+**Alternatively using Docker**:
+
+1. Make sure that `docker` command is available in your system.
+2. Clone this repository:
+    ```
+    git clone https://github.com/grem11n/s3bc.git
+    ```
+2. Run:
+    ```
+    make docker-build-dev
+    ```
+
+This will build an `s3bc:dev` image.
+
 ## Usage
 
 You can use `help` to get hints on how to use S3BC:
