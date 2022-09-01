@@ -11,4 +11,4 @@ COPY . /app
 
 RUN make build
 
-ENTRYPOINT ["/app/s3bc"]
+ENTRYPOINT ["/app/bin/s3bc"]

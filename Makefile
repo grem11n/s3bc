@@ -34,7 +34,7 @@ test: ## Run tests
 	@go test -v ./...
 
 build: ## Build the binary (intended to use with Docker)
-	@go build -mod=vendor -ldflags="-s -w -X github.com/grem11n/s3bc/version.Version=$(version) -X github.com/grem11n/s3bc/version.Commit=$(COMMIT) -X github.com/grem11n/s3bc/version.Date=$(DATETIME) -X github.com/grem11n/s3bc/version.BuiltBy=$(USER)"
+	@go build -mod=vendor -ldflags="-s -w -X github.com/grem11n/s3bc/version.Version=$(version) -X github.com/grem11n/s3bc/version.Commit=$(COMMIT) -X github.com/grem11n/s3bc/version.Date=$(DATETIME) -X github.com/grem11n/s3bc/version.BuiltBy=$(USER)" -o bin/s3bc
 	@echo "Built a new version of s3bc: $(version). Commit hash: $(COMMIT)"
 
 

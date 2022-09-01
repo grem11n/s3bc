@@ -27,12 +27,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "s3bc",
 	Short: "Bulk Storage Class update in an S3 bucket.",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  `S3BC or S3 Bulk Convert is a CLI tool to update the storage class of the files in an AWS S3 bucket.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
