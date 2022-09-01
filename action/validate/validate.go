@@ -35,7 +35,7 @@ func Run(config *config.Config) error {
 		fmt.Printf("Desired storage class: %s\n", config.StorageClass)
 
 		fmt.Printf(
-			"%v files in \"%s\" bucket have different storage class.\nTo get the list of the files, use \"--verbose\" of \"-v\" flag.",
+			"%v files in \"%s\" bucket have different storage class.\nTo get the list of the files, use \"--verbose\" of \"-v\" flag.\n",
 			len(convertibles),
 			config.Bucket)
 
